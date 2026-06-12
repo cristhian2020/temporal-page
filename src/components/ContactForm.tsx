@@ -1,8 +1,8 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 
-const EMAILJS_SERVICE_ID = import.meta.env.PUBLIC_EMAILJS_SERVICE_ID;
-const EMAILJS_TEMPLATE_ID = import.meta.env.PUBLIC_EMAILJS_TEMPLATE_ID;
-const EMAILJS_PUBLIC_KEY = import.meta.env.PUBLIC_EMAILJS_PUBLIC_KEY;
+const EMAILJS_SERVICE_ID = "service_kjy6jbc";
+const EMAILJS_TEMPLATE_ID = "template_yxik3ps";
+const EMAILJS_PUBLIC_KEY = "XvqWI1XHe5kEuZ-CM";
 
 interface FormState {
   name: string;
@@ -36,26 +36,29 @@ export default function ContactForm({ hideTitle = false }: ContactFormProps) {
     e.preventDefault();
     setStatus("sending");
 
+    const payload = {
+      service_id: EMAILJS_SERVICE_ID,
+      template_id: EMAILJS_TEMPLATE_ID,
+      user_id: EMAILJS_PUBLIC_KEY,
+      template_params: {
+        from_name: form.name,
+        from_email: form.email,
+        company: form.company,
+        message: form.message,
+        to_email: "mariel@elementsafetyllc.com",
+      },
+    };
+
     try {
       const response = await fetch(
         "https://api.emailjs.com/api/v1.0/email/send",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            service_id: EMAILJS_SERVICE_ID,
-            template_id: EMAILJS_TEMPLATE_ID,
-            user_id: EMAILJS_PUBLIC_KEY,
-            template_params: {
-              from_name: form.name,
-              from_email: form.email,
-              company: form.company,
-              message: form.message,
-              to_email: " peopleteam@elementsafetyllc.com",
-            },
-          }),
+          body: JSON.stringify(payload),
         }
       );
+
 
       if (response.ok) {
         setStatus("success");
@@ -65,7 +68,7 @@ export default function ContactForm({ hideTitle = false }: ContactFormProps) {
         setStatus("error");
         setTimeout(() => setStatus("idle"), 5000);
       }
-    } catch {
+    } catch (err) {
       setStatus("error");
       setTimeout(() => setStatus("idle"), 5000);
     }

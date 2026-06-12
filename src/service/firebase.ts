@@ -11,6 +11,7 @@ const firebaseConfig = {
   appId: import.meta.env.PUBLIC_APP_ID,
 };
 
+
 export const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 export const storage = getStorage(app);
 export const db = getFirestore(app);
